@@ -13,21 +13,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import modelo.Producto;
 import servicios.interfaces.IFileService;
-import vista.SubirArchivo;
 
 public class FileServicioImpl implements IFileService {
 
     List<Producto> listaProductos = new ArrayList<>();
     ProductoServiceImpl productoService = new ProductoServiceImpl(listaProductos);
-    private String rutaArchivo;
-            
+    //private String rutaArchivo;
+
     public FileServicioImpl(List<Producto> listaProductos, ProductoServiceImpl productoService) {
         this.listaProductos = listaProductos;
         this.productoService = productoService;
     }
 
     @Override
-    public List<Producto> datos(File archivo) {
+    public List<Producto> datos(File archivo) {        
         if (archivo != null) {
             String linea = null;
             BufferedReader lector;
@@ -39,20 +38,29 @@ public class FileServicioImpl implements IFileService {
             }
 
             lector = new BufferedReader(archivoLectura);
+            String categoria = "Sin categoria";
+            String filtro = "Producto";
+            String[] categoriaBusqueda;
 
             try {
                 while ((linea = lector.readLine()) != null) {
-                    String[] productoString = linea.split(";");
-                    BigInteger codigo_producto = new BigInteger(productoString[0]);
-                    String nombre_producto = productoString[1];
-                    String marca_producto = productoString[2];
-                    Double precio_producto = Double.parseDouble(productoString[3]);
+                    categoriaBusqueda = linea.split(" ");
+                    if (categoriaBusqueda[0].equalsIgnoreCase(filtro)) {                     
+                        categoria = linea.substring((filtro.toLowerCase().length()+1), linea.length());
+                    } else {
+                        String[] productoString = linea.split(";");
+                        BigInteger codigo_producto = new BigInteger(productoString[0]);
+                        String nombre_producto = productoString[1];
+                        String categoria_producto = categoria;
+                        String marca_producto = productoString[3];
+                        Double precio_producto = Double.parseDouble(productoString[3]);
 
-                    Producto producto = new Producto(codigo_producto, nombre_producto, marca_producto, precio_producto);
-                    listaProductos = productoService.crear(producto);
+                        Producto producto = new Producto(codigo_producto, nombre_producto, categoria_producto, marca_producto, precio_producto);
+                        listaProductos = productoService.crear(producto);
+                    }
                 }
                 return listaProductos;
-            } catch (Exception e) {
+            } catch (IOException | NumberFormatException e) {
                 System.out.println("Error: " + e);
             }
             return null;
@@ -66,7 +74,7 @@ public class FileServicioImpl implements IFileService {
             try {
                 FileWriter archivoEscritura = new FileWriter(rutaArchivo);
                 for (Producto producto : listaProductos) {
-                    archivoEscritura.write(producto.getId()+";"+producto.getNombre()+";"+producto.getMarca()+";"+producto.getPrecio()+"\n");
+                    archivoEscritura.write(producto.getId() + ";" + producto.getNombre() + ";" + producto.getMarca() + ";" + producto.getPrecio() + "\n");
                 }
                 archivoEscritura.close();
             } catch (IOException ex) {
@@ -74,8 +82,9 @@ public class FileServicioImpl implements IFileService {
             }
 
         }
-    } /* Mejorar el tema de la ruta del archivo a reescribir: todavia no esta implementado
+    }
+    /* Mejorar el tema de la ruta del archivo a reescribir: todavia no esta implementado
       Hay que llevar la variabl 'ruta' hasta el repositorio*/
-    
+
 
 }

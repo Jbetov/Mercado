@@ -6,15 +6,17 @@ public class Producto {
 
     private BigInteger id;
     private String nombre;
+    private String categoria;
     private String marca;
     private Double precio;
 
     public Producto() {
     }
 
-    public Producto(BigInteger id, String nombre, String marca, Double precio) {
+    public Producto(BigInteger id, String nombre, String categoria,String marca, Double precio) {
         this.id = id;
         this.nombre = nombre;
+        this.categoria = categoria;
         this.marca = marca;
         this.precio = precio;
     }
@@ -35,6 +37,14 @@ public class Producto {
         this.nombre = nombre;
     }
 
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+    
     public String getMarca() {
         return marca;
     }
@@ -55,7 +65,8 @@ public class Producto {
     public String toString() {
         return "Producto{" + 
                 "id=" + id + 
-                ", nombre=" + nombre + 
+                ", nombre=" + nombre +
+                ", categoria=" + categoria +
                 ", marca=" + marca + 
                 ", precio=" + precio + 
                 '}';
